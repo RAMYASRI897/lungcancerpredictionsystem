@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Predict Lung Cancer - Lung Vision</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .prediction-section {
+      background: white;
+      max-width: 480px;
+      margin: 40px auto;
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      font-family: 'Poppins', sans-serif;
+      color: #333;
+      text-align: center;
+    }
+
+    .prediction-section h2 {
+      font-size: 2rem;
+      margin-bottom: 24px;
+      font-weight: 700;
+      color: #74546A;
+    }
+
+    #imageUpload {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1.5px solid #74546A;
+      margin-bottom: 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+
+    #imageUpload:hover {
+      border-color: #ff758c;
+    }
+
+    #imagePreview {
+      max-width: 100%;
+      max-height: 280px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(116, 84, 106, 0.3);
+      display: none;
+    }
+
+    #predictBtn {
+      background: linear-gradient(90deg, #74546A, #0B032D);
+      color: white;
+      padding: 14px 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: 12px;
+      border: none;
+      width: 100%;
+      cursor: pointer;
+      box-shadow: 0px 5px 15px rgba(116, 84, 106, 0.4);
+      transition: background 0.4s ease, transform 0.3s ease;
+    }
+
+    #predictBtn:hover:not(:disabled) {
+      background: linear-gradient(90deg, #ff758c, #ff7eb3);
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0px 10px 25px rgba(255, 65, 108, 0.5);
+    }
+
+    #predictBtn:disabled {
+      background: #a88aa9;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    #result {
+      margin-top: 25px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      min-height: 80px;
+      max-width: 100%;
+      width: 100%;
+      padding: 15px 20px;
+      border-radius: 12px;
+      background: #f8f4f8;
+      color: #74546A;
+      box-shadow: 0 4px 10px rgba(116, 84, 106, 0.15);
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    #result p {
+      color: #0B032D;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="IMAGES/LUNG VISION.png" alt="Logo" class="logo-img" />
+    </div>
+    <div class="nav-title">LUNG VISION</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="pages/aboutus/about.html">About Us</a></li>
+      <li><a href="pages/service page/services.html">Services</a></li>
+      <li><a href="pages/contactus/contactus.html">Contact Us</a></li>
+    </ul>
+  </nav>
+
+  <section class="prediction-section">
+    <h2>Upload Lung Image for Prediction</h2>
+    <input type="file" id="imageUpload" accept="image/*" />
+    <img id="imagePreview" alt="Image Preview" />
+    <button id="predictBtn">Predict</button>
+    <div id="result"></div>
+  </section>
+
+  <script>
+    const fileInput = document.getElementById("imageUpload");
+    const predictBtn = document.getElementById("predictBtn");
+    const resultDiv = document.getElementById("result");
+    const imagePreview = document.getElementById("imagePreview");
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (!file) {
+        imagePreview.style.display = 'none';
+        resultDiv.innerHTML = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+      resultDiv.innerHTML = '';
+    });
+
+    predictBtn.addEventListener("click", () => {
+      if (!fileInput.files.length) {
+        resultDiv.innerHTML = `<p>Please upload an image first.</p>`;
+        return;
+      }
+
+      predictBtn.disabled = true;
+      predictBtn.textContent = 'Predicting...';
+      resultDiv.innerHTML = '';
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+
+      fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        body: formData,
+      })
+        .then(res => {
+          if (!res.ok) throw new Error(`Server error: ${res.status}`);
+          return res.json();
+        })
+        .then(data => {
+          if (data.error) {
+            resultDiv.innerHTML = `<p>${data.error}</p>`;
+          } else {
+            if (data.label.toLowerCase() === 'unknown') {
+              resultDiv.innerHTML = `
+                <h3>Result: UNKNOWN</h3>
+                <p>This image does not appear to be a lung scan. Please upload a valid X-ray or CT scan.</p>
+                <p>Confidence: ${(data.confidence * 100).toFixed(2)}%</p>
+              `;
+            } else {
+              resultDiv.innerHTML = `
+                <h3>Prediction: ${data.label.toUpperCase()}</h3>
+                <p>Confidence: ${(data.confidence * 100).toFixed(2)}%</p>
+              `;
+            }
+          }
+        })
+        .catch(err => {
+          resultDiv.innerHTML = `<p>Error: ${err.message}</p>`;
+        })
+        .finally(() => {
+          predictBtn.disabled = false;
+          predictBtn.textContent = 'Predict';
+        });
+    });
+  </script>
+</body>
+</html>
+

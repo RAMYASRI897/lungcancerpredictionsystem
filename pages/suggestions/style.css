@@ -1,0 +1,199 @@
+/* Layout Fix: Make footer stick to bottom */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+    color: #2d2d2d;
+}
+
+/* Navbar */
+.navbar {
+    margin: 20px;
+    background: linear-gradient(90deg, #74546A, #0B032D);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.navbar:hover {
+    background: linear-gradient(90deg, #8E6F87, #130747);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+
+.logo-img {
+    height: 90px;
+    width: 120px;
+    transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.1);
+}
+
+.nav-title {
+    font-family: 'Roboto Slab', serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    flex-grow: 1;
+    text-align: center;
+    animation: fadeIn 1.5s ease-in-out, pulse 2s infinite, glow 1.5s infinite alternate;
+    transition: transform 0.5s ease, letter-spacing 0.5s ease, color 0.5s ease;
+}
+
+.nav-title:hover {
+    transform: scale(1.1) rotate(2deg);
+    letter-spacing: 2px;
+    color: #FFFDD0;
+}
+
+/* Doctor Section */
+.doctor-section {
+    padding: 40px 20px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.doctor {
+    display: flex;
+    align-items: flex-start;
+    background: #fff;
+    margin-bottom: 30px;
+    padding: 20px;
+    border-left: 6px solid #74546A;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.doctor:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.doctor img {
+    width: 140px;
+    height: auto;
+    border-radius: 8px;
+    margin-right: 25px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.doctor img:hover {
+    transform: scale(1.05);
+}
+
+.doctor-info {
+    max-width: 800px;
+}
+
+.doctor-info h3 {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    color: #3c2b3d;
+}
+
+.doctor-info p {
+    font-size: 1rem;
+    color: #555;
+    text-align: justify;
+}
+
+/* Footer */
+footer {
+    background-color: #74546A;
+    color: #ecf0f1;
+    text-align: center;
+    padding: 10px 15px;
+    position: relative;
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+footer p {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+}
+
+footer a {
+    color: #ecf0f1;
+    text-decoration: none;
+    margin: 0 5px;
+    font-size: 14px;
+    padding: 6px 10px;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    to {
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .doctor {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .doctor img {
+        margin-bottom: 15px;
+    }
+
+    .nav-title {
+        font-size: 2rem;
+    }
+}
+
